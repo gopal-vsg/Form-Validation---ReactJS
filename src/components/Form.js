@@ -13,24 +13,33 @@ const Form = () => {
 
   const [errors, setErrors] = useState({});
 
+  function isValidDate(day, month, year) {
+    const date = new Date(year, month - 1, day);
+    return (
+      date.getFullYear() === year &&
+      date.getMonth() + 1 === month &&
+      date.getDate() === day
+    );
+  }
+
   function validateDOB(dateString) {
     const regex = /^\d{2}-\d{2}-\d{4}$/;
     if (!regex.test(dateString)) return "Invalid date format. Use dd-mm-yyyy.";
     
     const [day, month, year] = dateString.split('-').map(Number);
 
-    if (month < 1 || month > 12) return "Month must be between 01 and 12.";
-    if (day < 1 || day > 31) return "Day must be between 01 and 31.";
+    if (!isValidDate(day, month, year)) return "Invalid date.";
     
     const currentYear = new Date().getFullYear();
-    if (currentYear - year < 17) return "You must be at least 17 years old.";
+    if (currentYear - year < 18) return "You must be at least 17 years old.";
 
     return true;
   }
 
   function validateAddress(address) {
-    const regex = /^[A-Za-z0-9 ,/. -]+$/; 
-    return regex.test(address) ? true : "Invalid address format.";
+    const regex = /^[A-Za-z0-9 ,/. -]+$/;
+    const hasAlphanumeric = /[A-Za-z0-9]/.test(address); // Ensures at least one letter or number
+    return regex.test(address) && hasAlphanumeric ? true : "Invalid address format.";
   }
 
   function validateName(name) {
